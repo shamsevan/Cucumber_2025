@@ -1,0 +1,8 @@
+cucumber2025/Results/
+cucumber2025/logs/
+
+#ignore System Files: 
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
