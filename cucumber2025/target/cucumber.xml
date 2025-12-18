@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Cucumber" time="20.367" tests="1" skipped="0" failures="0" errors="0">
+<testcase classname="Testing Logged user dashboard features" name="Add New Customer using Excel data" time="16.666">
+<system-out><![CDATA[
+Given Pass "mngr650508" on "UserID" Field...................................passed
+And Pass "mEhAbem" on "Password" Field......................................passed
+Then click on Login button with Valid Credentials...........................passed
+Given I open the "New Customer" page with PageButtontitle "Guru99 Bank New Customer Entry Page".passed
+When I fill the form using file "testcases_for_Automation.xlsx" and sheet "Invalid_Pin_Data" with fields:.passed
+Then I click Submit.........................................................passed
+]]></system-out>
+</testcase>
+</testsuite>
