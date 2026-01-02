@@ -44,7 +44,7 @@ jobs:
       # This is where we inject the "Custom Field" inputs into your command
       - name: Run Cucumber Tests
         run: |
-          mvn test \
+          mvn clean test \
           -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}" \
           -Dbrowser="${{ inputs.browser_name }}"
 
