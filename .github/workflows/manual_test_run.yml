@@ -14,12 +14,13 @@ on:
       browser_name:
         description: 'Browser (chrome or firefox)'
         required: true
-        default: 'edge'
+        default: 'edge-headless'
         type: choice
         options:
         - chrome
         - firefox
         - edge
+        - edge-headless
 
 # -------------------------------------------------------
 # 2. THE JOB (The computer running the test)
