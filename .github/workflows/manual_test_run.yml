@@ -1,115 +1,106 @@
-name: PDL Connect Automation Execution Pipeline
+name: "Automation Pipeline: PDL Connect Execution"
 
 # =================================================================
-# 1. TRIGGER SECTION: Defines the Manual Popup & Inputs
+# TRIGGER: Manual UI with Custom Inputs
 # =================================================================
 on:
   workflow_dispatch:
     inputs:
       cucumber_tags:
-        description: "Enter Tag to filter tests (e.g. @Smoke or @InvalidLogin)"
+        description: "Cucumber Tag (e.g., @InvalidLogin)"
         required: true
         type: string
-        default: '@InvalidLogin' # Sets your default tag as requested
+        default: '@InvalidLogin' # Default tag as requested
       browser_name:
-        description: "Select the Browser for execution"
+        description: "Execution Browser"
         required: true
-        default: 'edge-headless' # Sets your default browser as requested
+        default: 'edge-headless' # Default browser as requested
         type: choice
         options:
           - 'edge-headless'
           - 'chrome-headless'
-          - 'firefox-headless'
       email_to:
-        description: "Enter your Email Address to receive the Extent Report"
+        description: "Recipient Email for Extent Report"
         required: true
         type: string
         default: 'your-email@example.com'
 
 # =================================================================
-# 2. JOB CONFIGURATION: Environmental Setup
+# JOBS: Environment Setup & Test Execution
 # =================================================================
 jobs:
-  Automation-Execution:
-    name: "Run Automation: ${{ github.event.inputs.cucumber_tags }}"
-    runs-on: ubuntu-latest # Uses a fresh Linux machine provided by GitHub
+  Test-Execution-Job:
+    runs-on: ubuntu-latest # Standard Linux runner
     
-    # This global setting ensures every command starts inside your project folder
+    # Ensures every 'run' command starts inside your subfolder
     defaults:
       run:
         working-directory: cucumber2025 
 
     steps:
       # -----------------------------------------------------------
-      # STEP 1: INITIALIZATION
+      # 1. INITIALIZATION: Getting the environment ready
       # -----------------------------------------------------------
-      - name: "Initialize: Checkout Repository Code"
-        uses: actions/checkout@v4 # Copies your code from GitHub to the VM
+      - name: "Step 1: Checkout Repository"
+        uses: actions/checkout@v4 # Copies your code onto the machine
 
-      - name: "Initialize: Set up Java JDK 17"
-        uses: actions/setup-java@v4 # Installs Java on the VM
+      - name: "Step 2: Set up Java JDK 17"
+        uses: actions/setup-java@v4 # Installs the required Java version
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven' # Caches .jar files to speed up future runs
+          cache: 'maven' # Speeds up future runs by caching dependencies
 
       # -----------------------------------------------------------
-      # STEP 2: DEPENDENCY & COMPILATION (Sectionized Downloads)
+      # 2. PRE-FLIGHT: Moving downloads to a separate section
       # -----------------------------------------------------------
-      - name: "Pre-Flight: Download Maven Dependencies"
-        # Moves the "Downloading..." logs here so the Test tab stays clean
+      - name: "Step 3: Download Dependencies"
+        # This keeps the 'Run Test' section clean of download progress bars
         run: mvn dependency:go-offline 
 
-      - name: "Pre-Flight: Compile Project Classes"
-        # Ensures your ealrunner.java is compiled into ealrunner.class
+      - name: "Step 4: Compile Code"
+        # Forces a clean build to ensure the latest code is used
         run: mvn clean compile 
 
       # -----------------------------------------------------------
-      # STEP 3: TEST EXECUTION
+      # 3. EXECUTION: Running tests with COLORFUL LOGS
       # -----------------------------------------------------------
-      - name: "Execution: Run Cucumber Feature Files"
-        continue-on-error: true # Prevents pipeline from stopping if a test fails
+      - name: "Step 5: Run Cucumber Tests"
+        continue-on-error: true # Essential: allows email to send even if tests fail
         run: |
           mvn test \
-          -Dcucumber.filter.tags="${{ github.event.inputs.cucumber_tags }}" \
-          -Dbrowser="${{ github.event.inputs.browser_name }}" \
-          -Djansi.force=true # Forces colorful logs in the GitHub console
+          -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}" \
+          -Dbrowser="${{ inputs.browser_name }}" \
+          -Djansi.force=true # <--- THIS ENABLES THE COLORED LOGS
 
       # -----------------------------------------------------------
-      # STEP 4: REPORTING & NOTIFICATION
+      # 4. REPORTING: Artifacts and Email Notifications
       # -----------------------------------------------------------
-      - name: "Reporting: Upload Extent Report to GitHub"
-        if: always() # Ensures report is saved even if tests fail
+      - name: "Step 6: Upload Report to GitHub"
+        if: always() # Always run this to capture results of failures
         uses: actions/upload-artifact@v4
         with:
-          name: Cucumber-Extent-Report
-          # Uses wildcard (*) to find the dynamic date/time folder in your Results path
+          name: Automation-Report
+          # Uses wildcard (*) to find the dynamic date/time folder name
           path: "cucumber2025/Results/test-reports*/PipeLine_mvnRun_Report/mavenRUN.html"
 
-      - name: "Notification: Send Report via Email"
-        if: always() # Sends the email regardless of test pass/fail status
+      - name: "Step 7: Email Extent Report"
+        if: always() # Sends email regardless of test result
         uses: dawidd6/action-send-mail@v3
         with:
-          # SMTP server settings (Using Gmail as the example)
           server_address: smtp.gmail.com
           server_port: 465
           secure: true
-          # These secrets must be added in GitHub Settings > Secrets > Actions
+          # These values come from your GitHub Repository Secrets
           username: ${{ secrets.MAIL_USERNAME }} 
           password: ${{ secrets.MAIL_PASSWORD }} 
-          
-          # Email Content Setup
-          subject: "Automation Results: ${{ github.event.inputs.cucumber_tags }}"
-          to: ${{ github.event.inputs.email_to }}
-          from: "GitHub Automation Bot <${{ secrets.MAIL_USERNAME }}>"
+          subject: "Test Results: ${{ inputs.cucumber_tags }}"
+          to: ${{ inputs.email_to }}
+          from: "Automation Bot <${{ secrets.MAIL_USERNAME }}>"
           body: |
-            Automation Run Completed.
+            The automation run is complete.
+            - Tag: ${{ inputs.cucumber_tags }}
+            - Browser: ${{ inputs.browser_name }}
             
-            - Tag Executed: ${{ github.event.inputs.cucumber_tags }}
-            - Browser: ${{ github.event.inputs.browser_name }}
-            - Status: See attached report for details.
-            
-            The Extent Report is attached to this email.
-          
-          # Dynamic path for the attachment
+            Please find the Extent Report attached.
           attachments: "cucumber2025/Results/test-reports*/PipeLine_mvnRun_Report/mavenRUN.html"
