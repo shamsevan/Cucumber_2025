@@ -66,13 +66,18 @@ jobs:
       # 3. EXECUTION: Running tests with COLORFUL LOGS
       # -----------------------------------------------------------
       - name: "Step 5: Run Cucumber Tests"
-        continue-on-error: true # Essential: allows email to send even if tests fail
+        continue-on-error: true # Allows the pipeline to proceed to reporting even on failure
+        env:
+          # Mapping inputs to environment variables for cleaner command lines
+          TAGS: ${{ github.event.inputs.cucumber_tags }}
+          BROWSER: ${{ github.event.inputs.browser_name }}
         run: |
-          mvn test \
-          -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}" \
-          -Dbrowser="${{ inputs.browser_name }}" \
-          -Djansi.force=true # <--- THIS ENABLES THE COLORED LOGS
-
+          mvn -B test \
+          -Dcucumber.filter.tags="$TAGS" \
+          -Dbrowser="$BROWSER" \
+          -Dstyle.color=always \
+          -Djansi.force=true
+          
       # -----------------------------------------------------------
       # 4. REPORTING: Artifacts and Email Notifications
       # -----------------------------------------------------------
