@@ -23,7 +23,7 @@ on:
         description: "Recipient Email for Extent Report"
         required: true
         type: string
-        default: 'your-email@example.com'
+        default: 'ajaira.files1@gmail.com'
 
 # =================================================================
 # JOBS: Environment Setup & Test Execution
