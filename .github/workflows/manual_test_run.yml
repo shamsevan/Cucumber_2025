@@ -1,4 +1,4 @@
-name: "Automation Pipeline: EAL Execution"
+name: "EAL Automation Pipeline"
 
 # =================================================================
 # TRIGGER: Manual UI with Custom Inputs
