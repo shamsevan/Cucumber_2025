@@ -623,7 +623,6 @@
 						<!-- Runner Class Config -->
 						<testFailureIgnore>true</testFailureIgnore>
 						<includes>
-							<include>**/ealrunner.java</include>
 							<include>**/Runner*.class</include>
 						</includes>
 
