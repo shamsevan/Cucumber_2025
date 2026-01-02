@@ -9,12 +9,12 @@ on:
       cucumber_tags:
         description: 'Cucumber Tags (e.g., @Smoke or @Regression)'
         required: true
-        default: '@allTest'
+        default: '@InvalidLogin'
         type: string
       browser_name:
         description: 'Browser (chrome or firefox)'
         required: true
-        default: 'chrome'
+        default: 'edge'
         type: choice
         options:
         - chrome
