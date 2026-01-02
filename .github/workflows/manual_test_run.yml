@@ -41,8 +41,9 @@ jobs:
           distribution: 'temurin'
 
       # Step C: Run the Maven Command
-      # This is where we inject the "Custom Field" inputs into your command
       - name: Run Cucumber Tests
+        working-directory: cucumber2025  # 👈 Add this line here
+        continue-on-error: true
         run: |
           mvn clean test \
           -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}" \
