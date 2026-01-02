@@ -1,0 +1,57 @@
+name: Manual Cucumber Test Run
+
+# -------------------------------------------------------
+# 1. THE TRIGGER (How this starts)
+# -------------------------------------------------------
+on:
+  workflow_dispatch:  # This enables the "Run workflow" button
+    inputs:
+      cucumber_tags:
+        description: 'Cucumber Tags (e.g., @Smoke or @Regression)'
+        required: true
+        default: '@Smoke'
+        type: string
+      browser_name:
+        description: 'Browser (chrome or firefox)'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+        - chrome
+        - firefox
+        - edge
+
+# -------------------------------------------------------
+# 2. THE JOB (The computer running the test)
+# -------------------------------------------------------
+jobs:
+  Test-Execution-Job:
+    runs-on: ubuntu-latest  # We borrow a Linux machine from GitHub
+
+    steps:
+      # Step A: Download your code to the machine
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step B: Install Java (Required for Maven)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Step C: Run the Maven Command
+      # This is where we inject the "Custom Field" inputs into your command
+      - name: Run Cucumber Tests
+        run: |
+          mvn test \
+          -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}" \
+          -Dbrowser="${{ inputs.browser_name }}"
+
+      # Step D: Save the Reports (Even if tests fail)
+      - name: Upload Extent Report
+        if: always() # Run this even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: Automation-Report
+          path: PipeLine_mvnRun_Report/mavenRUN.html
