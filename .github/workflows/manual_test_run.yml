@@ -9,7 +9,7 @@ on:
       cucumber_tags:
         description: 'Cucumber Tags (e.g., @Smoke or @Regression)'
         required: true
-        default: '@Smoke'
+        default: '@allTest'
         type: string
       browser_name:
         description: 'Browser (chrome or firefox)'
