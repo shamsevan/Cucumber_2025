@@ -1,0 +1,31 @@
+-------------------------------------------------------------------------------
+Test set: eal.runners.ealrunner
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 27.90 s <<< FAILURE! -- in eal.runners.ealrunner
+Testing Homepage Items and Login related test cases ..Verify logging in with Invalid credentials in Login Homepage #1 -- Time elapsed: 7.516 s <<< FAILURE!
+java.lang.AssertionError: 
+The following asserts failed:
+	Alert generated and Text is as expected expected [User is not valid] but found [null]
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
+	at eal.utilities.SftAssert.assertAll(SftAssert.java:127)
+	at eal.hooks.Hooks.after(Hooks.java:114)
+
+Testing Homepage Items and Login related test cases ..Verify logging in with Invalid credentials in Login Homepage #2 -- Time elapsed: 6.714 s <<< FAILURE!
+java.lang.AssertionError: 
+The following asserts failed:
+	Alert generated and Text is as expected expected [User is not valid] but found [null]
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
+	at eal.utilities.SftAssert.assertAll(SftAssert.java:127)
+	at eal.hooks.Hooks.after(Hooks.java:114)
+
+Testing Homepage Items and Login related test cases ..Verify logging in with Invalid credentials in Login Homepage #3 -- Time elapsed: 6.343 s <<< FAILURE!
+java.lang.AssertionError: 
+The following asserts failed:
+	Alert generated and Text is as expected expected [User is not valid] but found [null]
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:46)
+	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:30)
+	at eal.utilities.SftAssert.assertAll(SftAssert.java:127)
+	at eal.hooks.Hooks.after(Hooks.java:114)
+

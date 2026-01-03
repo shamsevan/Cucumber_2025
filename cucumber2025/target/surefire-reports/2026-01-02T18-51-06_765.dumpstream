@@ -1,0 +1,5 @@
+# Created at 2026-01-02T18:51:07.137
+Boot Manifest-JAR contains absolute paths in classpath 'G:\EAL Teach\Shams Workspaces\Shams_ws1\Cucumber_2025\cucumber2025\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
