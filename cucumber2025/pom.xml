@@ -623,7 +623,7 @@
 						<!-- Runner Class Config -->
 						<testFailureIgnore>true</testFailureIgnore>
 						<includes>
-							<include>**/Runner*.class</include>
+							<include>**/runner*.class</include>
 						</includes>
 
 
