@@ -24,3 +24,88 @@ on:
         required: true
         type: string
         default: 'ajaira.files1@gmail.com'
+
+# =================================================================
+# JOBS: Environment Setup & Test Execution
+# =================================================================
+jobs:
+  Test-Execution-Job:
+    runs-on: ubuntu-latest # Standard Linux runner
+    
+    # Ensures every 'run' command starts inside your subfolder
+    defaults:
+      run:
+        working-directory: cucumber2025 
+
+    steps:
+      # -----------------------------------------------------------
+      # 1. INITIALIZATION: Getting the environment ready
+      # -----------------------------------------------------------
+      - name: "Step 1: Checkout Repository"
+        uses: actions/checkout@v4 # Copies your code onto the machine
+
+      - name: "Step 2: Set up Java JDK 17"
+        uses: actions/setup-java@v4 # Installs the required Java version
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven' # Speeds up future runs by caching dependencies
+
+      # -----------------------------------------------------------
+      # 2. PRE-FLIGHT: Moving downloads to a separate section
+      # -----------------------------------------------------------
+      - name: "Step 3: Download Dependencies"
+        # This keeps the 'Run Test' section clean of download progress bars
+        run: mvn dependency:go-offline 
+
+      - name: "Step 4: Compile Code"
+        # Forces a clean build to ensure the latest code is used
+        run: mvn clean compile 
+
+      # -----------------------------------------------------------
+      # 3. EXECUTION: Running tests with COLORFUL LOGS
+      # -----------------------------------------------------------
+      - name: "Step 5: Run Cucumber Tests"
+        continue-on-error: true # Allows the pipeline to proceed to reporting even on failure
+        env:
+          # Mapping inputs to environment variables for cleaner command lines
+          TAGS: ${{ github.event.inputs.cucumber_tags }}
+          BROWSER: ${{ github.event.inputs.browser_name }}
+        run: |
+          mvn -B test \
+          -Dcucumber.filter.tags="$TAGS" \
+          -Dbrowser="$BROWSER" \
+          -Dstyle.color=always \
+          -Djansi.force=true
+          
+      # -----------------------------------------------------------
+      # 4. REPORTING: Artifacts and Email Notifications
+      # -----------------------------------------------------------
+      - name: "Step 6: Upload Report to GitHub"
+        if: always() # Always run this to capture results of failures
+        uses: actions/upload-artifact@v4
+        with:
+          name: Automation-Report
+          # Uses wildcard (*) to find the dynamic date/time folder name
+          path: "cucumber2025/Results/test-reports*/PipeLine_mvnRun_Report/mavenRUN.html"
+
+      - name: "Step 7: Email Extent Report"
+        if: always() # Sends email regardless of test result
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          # These values come from your GitHub Repository Secrets
+          username: ${{ secrets.MAIL_USERNAME }} 
+          password: ${{ secrets.MAIL_PASSWORD }} 
+          subject: "Test Results: ${{ inputs.cucumber_tags }}"
+          to: ${{ inputs.email_to }}
+          from: "Automation Bot <${{ secrets.MAIL_USERNAME }}>"
+          body: |
+            The automation run is complete.
+            - Tag: ${{ inputs.cucumber_tags }}
+            - Browser: ${{ inputs.browser_name }}
+            
+            Please find the Extent Report attached.
+          attachments: "cucumber2025/Results/test-reports*/PipeLine_mvnRun_Report/mavenRUN.html"
