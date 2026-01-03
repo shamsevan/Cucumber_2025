@@ -23,7 +23,7 @@ on:
         description: "Recipient Email for Extent Report"
         required: true
         type: string
-        default: 'your_email@gmail.com'
+        default: 'eal.scrummaster@gmail.com'
 
 # =================================================================
 # JOBS: Environment Setup & Test Execution
