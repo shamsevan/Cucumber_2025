@@ -1,0 +1,26 @@
+name: "EAL Automation Pipeline"
+
+# =================================================================
+# TRIGGER: Manual UI with Custom Inputs
+# =================================================================
+on:
+  workflow_dispatch:
+    inputs:
+      cucumber_tags:
+        description: "Cucumber Tag (e.g., @InvalidLogin)"
+        required: true
+        type: string
+        default: '@InvalidLogin' # Default tag as requested
+      browser_name:
+        description: "Execution Browser"
+        required: true
+        default: 'edge-headless' # Default browser as requested
+        type: choice
+        options:
+          - 'edge-headless'
+          - 'chrome-headless'
+      email_to:
+        description: "Recipient Email for Extent Report"
+        required: true
+        type: string
+        default: 'ajaira.files1@gmail.com'
